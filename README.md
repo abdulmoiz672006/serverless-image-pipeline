@@ -14,7 +14,6 @@ An event-driven image pipeline built on AWS using the Management Console. A user
 - [AWS Services Used](#aws-services-used)
 - [Resource Names](#resource-names)
 - [Test Evidence](#test-evidence)
-- [Completed vs Planned](#completed-vs-planned)
 
 ## Architecture Diagram
 
@@ -177,27 +176,6 @@ The API returned a pre-signed PUT URL (valid 300 s). `FSC.jpg` was uploaded from
 | ![Run 2](docs/screenshots/14-stepfn-run2-graph.png) | Run 2 with a missing file: Failed as expected, failure published to SNS |
 | ![Source lifecycle](docs/screenshots/15a-lifecycle-source.png) | Source bucket rule: Standard-IA after 30 days, expire after 90 days |
 | ![Destination lifecycle](docs/screenshots/15b-lifecycle-dest.png) | Destination bucket rule: expire `processed/` after 30 days |
-
-## Completed vs Planned
-
-| Feature | Status | Notes |
-|---|---|---|
-| S3 source and destination buckets | Tested | Private, Block Public Access on, SSE-S3 |
-| S3 event notification to SQS | Tested | Prefix `uploads/` |
-| SQS queue, DLQ and redrive policy | Tested | 3 receives, then DLQ |
-| Lambda resize and watermark (Pillow layer) | Tested | Idempotent output key |
-| IAM least-privilege roles | Implemented | Processor role has no `s3:ListBucket` on purpose |
-| DynamoDB metadata | Tested | One row per processed image |
-| SNS success and failure email | Tested | Success email tested, including the API path |
-| API Gateway pre-signed upload URL | Tested | 300 s URL, throttled 5 / 10 |
-| CloudFront with OAC | Tested | Bucket policy allows only this distribution, only for `processed/*` |
-| Step Functions workflow | Partially implemented | Started manually, not connected to the live upload path |
-| Lifecycle rule, destination bucket | Implemented | Not proven by a test |
-| Lifecycle rule, source bucket | Implemented | Not proven by a test. Objects under 128 KB do not transition by default |
-| API authentication (API key or authorizer) | Planned | The API is public with throttling only |
-| CloudFront signed URLs or cookies | Planned | Processed images are readable by anyone with the URL |
-| Step Functions on the live upload path | Planned | |
-| SQS report batch item failures | Planned | Not needed while batch size is 1 |
 
 ## License
 
